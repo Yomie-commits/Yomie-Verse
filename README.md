@@ -13,7 +13,6 @@ Static website (HTML, CSS, JavaScript). No build step, no server, no database. I
 | `pricing.html` | Starter / Professional / Business packages |
 | `about.html` | About Naomi Mwangi |
 | `contact.html` | Contact & consultation form, WhatsApp, email, LinkedIn |
-| `demo.html` | Interactive live demo (sample emails) |
 | `thank-you.html` | Shown after the form is sent |
 | `404.html` | Not-found page |
 
@@ -22,7 +21,6 @@ Static website (HTML, CSS, JavaScript). No build step, no server, no database. I
 - **Contact email** (form destination and email links): `assets/js/config.js`
 - **WhatsApp number, LinkedIn, site address**: search the HTML files for `wa.me/254792002230`, `linkedin.com/in/naomi-njeri-m` and `yomie-commits.github.io/Yomie-Verse`
 - **Colours and fonts**: the `:root` block at the top of `assets/css/styles.css`
-- **Demo emails**: `assets/js/demo.js`
 - **Your photo**: replace the "NM" circle in `about.html` with `<img src="assets/img/naomi.jpg" alt="Naomi Mwangi">`
 
 ## Deploy on GitHub Pages
