@@ -1,63 +1,165 @@
-// YomieVerse site scripts: mobile menu, scroll reveal, footer year, form redirect.
+/* YomieVerse — navigation, reveal, enquiry form, analytics hooks */
 (function () {
-  var toggle = document.querySelector('.nav-toggle');
-  var links = document.getElementById('nav-links');
-  if (toggle && links) {
-    toggle.addEventListener('click', function () {
-      var open = links.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
+  "use strict";
+  window.__yv = true;
+  var SITE = window.SITE || {};
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  /* ---------- Analytics (only if configured) ---------- */
+  function track(name, params) {
+    try {
+      if (window.gtag) window.gtag("event", name, params || {});
+      if (window.dataLayer) window.dataLayer.push(Object.assign({ event: name }, params || {}));
+    } catch (e) { /* analytics must never break the page */ }
   }
-
-  var items = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.12 });
-    items.forEach(function (el) { io.observe(el); });
-  } else {
-    items.forEach(function (el) { el.classList.add('visible'); });
-  }
-
-  document.querySelectorAll('[data-year]').forEach(function (el) {
-    el.textContent = new Date().getFullYear();
-  });
-
-  // Contact email comes from assets/js/config.js so it lives in one place.
-  var email = (window.SITE && window.SITE.email) || '';
-  if (email) {
-    document.querySelectorAll('[data-email]').forEach(function (a) {
-      var subject = a.getAttribute('data-subject');
-      a.href = 'mailto:' + email + (subject ? '?subject=' + encodeURIComponent(subject) : '');
-      if (a.hasAttribute('data-email-text')) a.textContent = email;
-    });
-    document.querySelectorAll('form[data-formsubmit]').forEach(function (f) {
-      f.action = 'https://formsubmit.co/' + email;
-    });
-  }
-
-  // FormSubmit needs an absolute "thank you" URL; build it from wherever the site is hosted.
-  document.querySelectorAll('input[name="_next"]').forEach(function (input) {
-    input.value = new URL('thank-you.html', window.location.href).href;
-  });
-  document.querySelectorAll('input[name="_url"]').forEach(function (input) {
-    input.value = window.location.href;
-  });
-
-  // Pre-select a package when arriving from the pricing page (contact.html?package=Professional).
-  var params = new URLSearchParams(window.location.search);
-  var pkg = params.get('package');
-  var needs = document.getElementById('needs');
-  if (pkg && needs && !needs.value) {
-    needs.value = 'I am interested in the ' + pkg + ' package.';
-  }
-  var type = params.get('type');
-  var reqType = document.getElementById('request_type');
-  if (type && reqType) {
-    for (var i = 0; i < reqType.options.length; i++) {
-      if (reqType.options[i].value.toLowerCase().indexOf(type.toLowerCase()) === 0) { reqType.selectedIndex = i; }
+  (function analytics() {
+    if (SITE.cloudflareAnalyticsToken) {
+      var s = document.createElement("script"); s.defer = true; s.src = "https://static.cloudflareinsights.com/beacon.min.js";
+      s.setAttribute("data-cf-beacon", JSON.stringify({ token: SITE.cloudflareAnalyticsToken })); document.head.appendChild(s);
     }
+    if (SITE.ga4MeasurementId) {
+      var g = document.createElement("script"); g.async = true; g.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(SITE.ga4MeasurementId); document.head.appendChild(g);
+      window.dataLayer = window.dataLayer || []; window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag("js", new Date()); window.gtag("config", SITE.ga4MeasurementId, { anonymize_ip: true });
+    }
+  })();
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("[data-track]"); if (a) track(a.getAttribute("data-track"), { label: (a.textContent || "").trim().slice(0, 60), page: location.pathname });
+  });
+
+  /* ---------- Mobile navigation ---------- */
+  var toggle = $(".nav-toggle"), menu = $("#menu");
+  function closeMenu() { if (!menu) return; menu.classList.remove("is-open"); toggle.setAttribute("aria-expanded", "false"); toggle.setAttribute("aria-label", "Open menu"); }
+  if (toggle && menu) {
+    toggle.addEventListener("click", function () {
+      var open = menu.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    });
+    menu.addEventListener("click", function (e) { if (e.target.closest("a")) closeMenu(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && menu.classList.contains("is-open")) { closeMenu(); toggle.focus(); } });
+    window.addEventListener("resize", function () { if (window.innerWidth > 1060) closeMenu(); });
   }
+
+  /* ---------- Reveal on scroll ---------- */
+  var items = $$(".reveal");
+  if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+    }, { rootMargin: "0px 0px -6% 0px", threshold: 0.06 });
+    items.forEach(function (el) { io.observe(el); });
+  } else items.forEach(function (el) { el.classList.add("in"); });
+
+  /* ---------- Year ---------- */
+  $$("[data-year]").forEach(function (el) { el.textContent = new Date().getFullYear(); });
+
+  /* ---------- Email links come from config.js (kept out of the HTML) ---------- */
+  $$("[data-email]").forEach(function (el) {
+    if (!SITE.email) return;
+    el.href = "mailto:" + SITE.email;
+    if (el.hasAttribute("data-email-show")) el.textContent = SITE.email;
+  });
+
+  /* ---------- Booking link (optional) ---------- */
+  if (SITE.bookingUrl) $$("[data-booking]").forEach(function (el) { el.hidden = false; el.href = SITE.bookingUrl; });
+
+  /* ---------- Enquiry form ---------- */
+  var form = $("#enquiry-form");
+  if (!form) return;
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  var PHONE_RE = /^[+()\d\s-]{7,20}$/;
+
+  // Prefill from links such as contact.html?service=leadflow&type=demo
+  try {
+    var q = new URLSearchParams(location.search);
+    var svc = q.get("service"), type = q.get("type");
+    if (svc) { var opt = form.querySelector('select[name="Service of interest"] option[data-key="' + svc.replace(/[^a-z-]/gi, "") + '"]'); if (opt) opt.selected = true; }
+    if (type) { var r = form.querySelector('input[name="Request type"][data-key="' + type.replace(/[^a-z-]/gi, "") + '"]'); if (r) r.checked = true; }
+  } catch (e) { /* ignore */ }
+
+  // No-JavaScript fallback posts straight to FormSubmit; with JS we send it in the background.
+  form.action = "https://formsubmit.co/" + encodeURIComponent(SITE.email || "");
+  var next = form.querySelector('input[name="_next"]'); if (next) next.value = new URL("thank-you.html", location.href).href;
+
+  function fieldWrap(el) { return el.closest(".field"); }
+  function setErr(el, msg) {
+    var w = fieldWrap(el); if (!w) return;
+    var e = w.querySelector(".err");
+    if (msg) { w.classList.add("has-error"); if (e) e.textContent = msg; el.setAttribute("aria-invalid", "true"); if (e && e.id) el.setAttribute("aria-describedby", e.id); }
+    else { w.classList.remove("has-error"); el.removeAttribute("aria-invalid"); }
+  }
+  function check(el) {
+    var v = (el.value || "").trim(), msg = "";
+    if (el.type === "radio") {
+      var group = form.querySelectorAll('input[name="' + el.name + '"]'), any = Array.prototype.some.call(group, function (x) { return x.checked; });
+      if (el.required && !any) msg = el.getAttribute("data-msg") || "Please choose an option.";
+      setErr(group[0], msg); return !msg;
+    }
+    if (el.type === "checkbox") { if (el.required && !el.checked) msg = el.getAttribute("data-msg") || "Please confirm to continue."; }
+    else if (el.required && !v) msg = el.getAttribute("data-msg") || "This field is required.";
+    else if (v && el.type === "email" && !EMAIL_RE.test(v)) msg = "Please enter a valid email address, like name@business.com.";
+    else if (v && el.type === "tel" && !PHONE_RE.test(v)) msg = "Please enter a valid phone number, e.g. +254 712 345 678.";
+    else if (v && el.minLength > 0 && v.length < el.minLength) msg = "Please add a little more detail (at least " + el.minLength + " characters).";
+    setErr(el, msg); return !msg;
+  }
+  function validate() {
+    var first = null, seen = {};
+    $$("[required], input[type=email], input[type=tel]", form).forEach(function (el) {
+      if (el.type === "radio") { if (seen[el.name]) return; seen[el.name] = 1; }
+      if (!check(el) && !first) first = el;
+    });
+    if (first) first.focus();
+    return !first;
+  }
+  form.addEventListener("blur", function (e) { if (e.target.matches("input, select, textarea") && e.target.value) check(e.target); }, true);
+  form.addEventListener("input", function (e) { if (fieldWrap(e.target) && fieldWrap(e.target).classList.contains("has-error")) check(e.target); });
+  form.addEventListener("change", function (e) { if (e.target.type === "radio" || e.target.type === "checkbox") check(e.target); });
+
+  var msgBox = $("#form-msg"), btn = form.querySelector("[type=submit]"), btnHtml = btn ? btn.innerHTML : "";
+  function showMsg(kind, html) { msgBox.hidden = false; msgBox.className = "form-msg form-msg--" + kind; msgBox.innerHTML = html; msgBox.setAttribute("role", kind === "err" ? "alert" : "status"); }
+  function waLink() { return "https://wa.me/" + (SITE.whatsapp || "") + "?text=" + encodeURIComponent("Hello YomieVerse, I tried to send an enquiry on your website."); }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    msgBox.hidden = true;
+    if (form.querySelector('input[name="_honey"]').value) return; // spam trap
+    if (!validate()) { showMsg("err", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>Please fix the highlighted fields and try again.</span>'); return; }
+    if (location.protocol === "file:") { showMsg("ok", "<span><strong>Preview:</strong> the form is valid. Enquiries are delivered once the site is online.</span>"); return; }
+
+    var data = {};
+    new FormData(form).forEach(function (v, k) { if (k !== "_next") data[k] = data[k] ? data[k] + ", " + v : v; });
+    data._subject = "New YomieVerse enquiry — " + (data["Service of interest"] || "General") + " (" + (data["Request type"] || "Enquiry") + ")";
+    btn.disabled = true; btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Sending…';
+    var ctrl = window.AbortController ? new AbortController() : null, timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 20000);
+
+    fetch("https://formsubmit.co/ajax/" + encodeURIComponent(SITE.email || ""), {
+      method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(data), signal: ctrl ? ctrl.signal : undefined
+    }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        clearTimeout(timer);
+        var ok = res.ok && (res.j.success === true || res.j.success === "true");
+        if (!ok) {
+          var needsActivation = /activat/i.test(String(res.j.message || ""));
+          throw new Error(needsActivation ? "activation" : "failed");
+        }
+        track("generate_lead", { service: data["Service of interest"], type: data["Request type"] });
+        var name = String(data["Full name"] || "").split(" ")[0];
+        form.hidden = true;
+        var done = $("#form-done"); done.hidden = false;
+        var n = $("#done-name"); if (n) n.textContent = name ? ", " + name : "";
+        var how = $("#done-how"); if (how) how.textContent = (data["Preferred contact method"] || "email").toLowerCase();
+        done.focus();
+      })
+      .catch(function (err) {
+        clearTimeout(timer);
+        var act = err && err.message === "activation";
+        showMsg("err", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span><strong>' +
+          (act ? "Our form is being set up." : "Sorry, your message couldn't be sent.") + "</strong> " +
+          (act ? "Please reach us directly for now: " : "Please check your connection and try again, or reach us directly: ") +
+          '<a href="' + waLink() + '" target="_blank" rel="noopener">WhatsApp</a> or <a href="mailto:' + (SITE.email || "") + '">' + (SITE.email || "email") + "</a>.</span>");
+        track("form_error", { reason: act ? "activation" : "network" });
+      })
+      .then(function () { btn.disabled = false; btn.innerHTML = btnHtml; });
+  });
 })();
