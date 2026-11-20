@@ -1,10 +1,12 @@
 # YomieVerse
 
-The website for YomieVerse, an AI automation and digital solutions brand. It covers three products:
+The parent-company website for YomieVerse, an AI automation and digital workflow brand. It presents three independent products, each with its own website:
 
-- **SocialFlow AI**, which has its own site: https://yomie-commits.github.io/SocialFlowAI/
-- **LeadFlow AI**, offered as a custom setup
-- **ExecutiveFlow AI**, offered as a custom setup
+- **SocialFlow AI**: https://yomie-commits.github.io/SocialFlowAI/
+- **ExecutiveFlow AI**: https://yomie-commits.github.io/ExecutiveFlowAI/
+- **LeadFlow AI**: https://yomie-commits.github.io/LeadFlowAI/
+
+See **[ECOSYSTEM.md](ECOSYSTEM.md)** for how the four repositories fit together.
 
 Live site: https://yomie-commits.github.io/Yomie-Verse/
 
@@ -12,7 +14,7 @@ Live site: https://yomie-commits.github.io/Yomie-Verse/
 
 | Path | What it is |
 |---|---|
-| `*.html` | Built pages: home, solutions, leadflow-ai, executiveflow-ai, services, how-it-works, pricing, about, contact, privacy, thank-you, 404 |
+| `*.html` | Built pages: home, products, services, how-it-works, pricing (by product), about, contact, privacy, thank-you, 404. `solutions.html`, `leadflow-ai.html`, `executiveflow-ai.html` and `ai-executive-assistant.html` are redirects |
 | `build.py` | Generates every page, the sitemap and robots.txt. Page copy, header and footer live here |
 | `assets/css/site.css` | Design system: navy, violet and electric blue |
 | `assets/js/config.js` | **Settings you can change without rebuilding**: email, WhatsApp, booking link, analytics |

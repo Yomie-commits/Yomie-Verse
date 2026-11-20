@@ -15,10 +15,12 @@ import json, os, re, datetime
 # ------------------------------------------------------------------ SETTINGS
 SITE_URL = "https://yomie-commits.github.io/Yomie-Verse"   # no trailing slash
 SOCIALFLOW_URL = "https://yomie-commits.github.io/SocialFlowAI/"
+EXECUTIVEFLOW_URL = "https://yomie-commits.github.io/ExecutiveFlowAI/"
+LEADFLOW_URL = "https://yomie-commits.github.io/LeadFlowAI/"
 WHATSAPP = "254792002230"
 WHATSAPP_DISPLAY = "+254 792 002 230"
 LINKEDIN = "https://www.linkedin.com/in/naomi-njeri-m/"
-ASSET_VERSION = "2"
+ASSET_VERSION = "3"
 OUT = os.path.dirname(os.path.abspath(__file__))
 # ---------------------------------------------------------------------------
 
@@ -70,6 +72,7 @@ ICONS = {
   "lang": '<path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/>',
   "target": '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
   "tag": '<path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1.5"/>',
+  "chev": '<path d="M6 9l6 6 6-6"/>',
   "share": '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>',
   "funnel": '<path d="M3 4h18l-7 8v6l-4 2v-8z"/>',
   "inboxes": '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
@@ -101,20 +104,25 @@ def wa(msg="Hello YomieVerse, I'd like to talk about automating part of my busin
 BOOK = "contact.html?type=consultation#enquiry"
 EMAIL_LINK = '<a href="contact.html#enquiry" data-email data-email-show>Email us</a>'
 
-NAV = [("solutions.html", "Solutions"), ("services.html", "Services"), ("how-it-works.html", "How it works"),
-       ("pricing.html", "Pricing"), ("about.html", "About"), ("contact.html", "Contact")]
-NAV_PARENT = {"leadflow-ai.html": "solutions.html", "executiveflow-ai.html": "solutions.html"}
+NAV_BEFORE = [("index.html", "Home"), ("about.html", "About")]
+NAV_AFTER = [("services.html", "Services"), ("contact.html", "Contact")]
+
+
+def nav_items(cur):
+    li = lambda h, t: f'<li><a href="{h}"{" aria-current=" + chr(34) + "page" + chr(34) if h == cur else ""}>{t}</a></li>'
+    prods = "".join(f'<li><a href="{p["url"]}" data-track="nav_{p["key"]}"><span class="pi {p["pi"]}">{ic(p["icon"])}</span><span><b>{p["name"]}</b><small>{p["short"]}</small></span></a></li>' for p in PRODUCTS)
+    dd = f'''<li class="has-dd"><button class="dd-toggle" type="button" aria-expanded="false" aria-controls="dd-products"{" data-current" if cur == "products.html" else ""}>Our Products {ic("chev")}</button>
+      <ul class="dd" id="dd-products">{prods}<li><a class="dd-all" href="products.html">Compare all products</a></li></ul></li>'''
+    return "".join(li(h, t) for h, t in NAV_BEFORE) + dd + "".join(li(h, t) for h, t in NAV_AFTER)
 
 
 def header(current):
-    cur = NAV_PARENT.get(current, current)
-    links = "".join(f'<li><a href="{h}"{" aria-current=" + chr(34) + "page" + chr(34) if h == cur else ""}>{t}</a></li>' for h, t in NAV)
     return f'''<a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <nav class="container nav" aria-label="Main">
     <a class="logo" href="index.html" aria-label="YomieVerse home">{LOGO_SVG}<span>Yomie<b>Verse</b></span></a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu">{ic("menu")}</button>
-    <ul class="menu" id="menu">{links}<li class="menu-cta"><a href="{BOOK}" data-track="cta_book_consultation">Book a consultation</a></li></ul>
+    <ul class="menu" id="menu">{nav_items(current)}<li class="menu-cta"><a href="{BOOK}" data-track="cta_book_consultation">Book a consultation</a></li></ul>
   </nav>
 </header>'''
 
@@ -128,16 +136,16 @@ def footer():
         <a class="logo" href="index.html">{LOGO_SVG}<span>Yomie<b>Verse</b></span></a>
         <p class="mt-1">Practical AI automation that helps growing businesses reduce repetitive work, stay organised and spend more time on growth. Based in Nairobi, Kenya, working with clients locally and internationally.</p>
       </div>
-      <div><h3>Solutions</h3><ul>
+      <div><h3>Our products</h3><ul>
         <li><a href="{SOCIALFLOW_URL}">SocialFlow AI</a></li>
-        <li><a href="leadflow-ai.html">LeadFlow AI</a></li>
-        <li><a href="executiveflow-ai.html">ExecutiveFlow AI</a></li>
-        <li><a href="solutions.html">All solutions</a></li></ul></div>
+        <li><a href="{EXECUTIVEFLOW_URL}">ExecutiveFlow AI</a></li>
+        <li><a href="{LEADFLOW_URL}">LeadFlow AI</a></li>
+        <li><a href="products.html">Compare products</a></li></ul></div>
       <div><h3>Company</h3><ul>
+        <li><a href="about.html">About YomieVerse</a></li>
         <li><a href="services.html">Automation services</a></li>
         <li><a href="how-it-works.html">How it works</a></li>
-        <li><a href="pricing.html">Pricing</a></li>
-        <li><a href="about.html">About</a></li></ul></div>
+        <li><a href="pricing.html">Pricing</a></li></ul></div>
       <div><h3>Get started</h3><ul>
         <li><a href="{BOOK}" data-track="cta_book_consultation">Book a consultation</a></li>
         <li><a href="contact.html?type=demo#enquiry" data-track="cta_request_demo">Request a demo</a></li>
@@ -160,7 +168,9 @@ ORG = {"@context": "https://schema.org", "@type": "Organization", "name": "Yomie
        "description": "Practical AI automation and digital solutions for entrepreneurs, startups and small to medium-sized businesses.",
        "founder": {"@type": "Person", "name": "Naomi Mwangi", "jobTitle": "Founder & AI Automation Specialist", "sameAs": [LINKEDIN]},
        "address": {"@type": "PostalAddress", "addressLocality": "Nairobi", "addressCountry": "KE"},
-       "areaServed": ["Kenya", "Worldwide"], "sameAs": [LINKEDIN]}
+       "areaServed": ["Kenya", "Worldwide"], "sameAs": [LINKEDIN],
+       "brand": [{"@type": "Brand", "name": "SocialFlow AI", "url": SOCIALFLOW_URL}, {"@type": "Brand", "name": "ExecutiveFlow AI", "url": EXECUTIVEFLOW_URL},
+                 {"@type": "Brand", "name": "LeadFlow AI", "url": LEADFLOW_URL}]}
 
 
 def page(fn, title, desc, body, ld=None, noindex=False):
@@ -236,27 +246,27 @@ def sample_label(dark=False):
 
 # ============================================================== CONTENT
 PRODUCTS = [
-    {"key": "socialflow", "acc": "acc-sf", "icon": "share", "name": "SocialFlow AI",
+    {"key": "socialflow", "acc": "acc-sf", "pi": "pi--sf", "short": "Social media content, approvals and reporting", "icon": "share", "name": "SocialFlow AI",
      "tagline": "Plan, create and approve social content in one flow.",
      "desc": "An AI-powered social media workflow that turns your goals into a content calendar, drafts on-brand captions and hashtags, routes posts for approval and summarises how your content performs.",
      "problem": "Posting consistently takes hours of planning, writing and back-and-forth approvals, so content ends up last-minute or stops altogether.",
      "caps": ["AI-assisted content generation", "Social media content calendars", "Caption and hashtag generation", "Content strategy development", "Content approval workflows", "Publishing and scheduling integrations", "Social media performance summaries"],
      "ideal": "Businesses, social media managers, marketing agencies and entrepreneurs.",
      "url": SOCIALFLOW_URL, "external": True, "status": "Available now"},
-    {"key": "leadflow", "acc": "acc-lf", "icon": "funnel", "name": "LeadFlow AI",
-     "tagline": "Capture every enquiry and follow up on time.",
-     "desc": "An intelligent lead management system that captures enquiries from your website and inbox, organises and qualifies them, reminds you to follow up and shows where every lead stands.",
-     "problem": "Enquiries arrive through forms, email and WhatsApp. Without a system some are missed, replies are slow and follow-ups depend on memory.",
-     "caps": ["Website enquiry capture", "Lead organisation and categorisation", "AI-assisted lead qualification", "CRM and spreadsheet integration", "Automated follow-up reminders", "Lead notifications", "Sales pipeline reporting"],
-     "ideal": "Service businesses, real estate companies, consultants, agencies and sales teams.",
-     "url": "leadflow-ai.html", "external": False, "status": "Available as a custom setup"},
-    {"key": "executiveflow", "acc": "acc-ef", "icon": "inboxes", "name": "ExecutiveFlow AI",
+    {"key": "executiveflow", "acc": "acc-ef", "pi": "pi--ef", "short": "Email, tasks, meetings and daily briefings", "icon": "inboxes", "name": "ExecutiveFlow AI",
      "tagline": "Your inbox, tasks and meetings, organised every morning.",
      "desc": "An AI-powered executive assistant that organises and summarises your email, turns requests into tasks, coordinates meetings, drafts replies for your approval and sends you a daily briefing.",
      "problem": "Important emails get buried, deadlines hide in long threads and follow-ups slip, while hours go into sorting the inbox instead of running the business.",
      "caps": ["Email organisation and summarisation", "Task extraction", "Calendar and meeting coordination", "Administrative workflow automation", "Daily briefings", "Follow-up reminders", "AI-assisted email drafting with human approval"],
      "ideal": "Entrepreneurs, executives, consultants and busy professionals.",
-     "url": "executiveflow-ai.html", "external": False, "status": "Available as a custom setup"},
+     "url": EXECUTIVEFLOW_URL, "external": True, "status": "Available as a custom setup"},
+    {"key": "leadflow", "acc": "acc-lf", "pi": "pi--lf", "short": "Lead capture, qualification and follow-up", "icon": "funnel", "name": "LeadFlow AI",
+     "tagline": "Capture every enquiry and follow up on time.",
+     "desc": "An intelligent lead management system that captures enquiries from your website and inbox, organises and qualifies them, reminds you to follow up and shows where every lead stands.",
+     "problem": "Enquiries arrive through forms, email and WhatsApp. Without a system some are missed, replies are slow and follow-ups depend on memory.",
+     "caps": ["Website enquiry capture", "Lead organisation and categorisation", "AI-assisted lead qualification", "CRM and spreadsheet integration", "Automated follow-up reminders", "Lead notifications", "Sales pipeline reporting"],
+     "ideal": "Service businesses, real estate companies, consultants, agencies and sales teams.",
+     "url": LEADFLOW_URL, "external": True, "status": "Available as a custom setup"}
 ]
 
 
@@ -264,7 +274,7 @@ def product_card(p, compact=False):
     caps = p["caps"][:4] if compact else p["caps"]
     more = f'<p class="muted small mb-0">+ {len(p["caps"]) - 4} more capabilities</p>' if compact else ""
     explore = f'<a class="btn btn--acc btn--sm" href="{p["url"]}" data-track="explore_{p["key"]}">Explore {p["name"]} {ic("ext" if p["external"] else "arrow")}</a>'
-    demo = f'<a class="link-arrow small" href="contact.html?service={p["key"]}&amp;type=demo#enquiry" data-track="cta_request_demo">Request a demo {ic("arrow")}</a>'
+    demo = f'<a class="link-arrow small" href="{p["url"]}#contact" data-track="cta_request_demo_{p["key"]}">Request a demo {ic("arrow")}</a>'
     return f'''<article class="product {p["acc"]} reveal" id="{p["key"]}">
   <div class="p-head"><span class="p-mark">{ic(p["icon"])}</span><div><h3>{p["name"]}</h3><span class="badge">{p["status"]}</span></div></div>
   <p class="tagline">{p["tagline"]}</p>
@@ -322,10 +332,10 @@ WHY = [
 
 HOME_FAQ = [
     ("What does YomieVerse do?", "We help businesses reduce repetitive work by setting up practical AI automation: organising email and tasks, capturing and following up on leads, planning and approving social media content, and connecting the tools you already use."),
-    ("Are your products apps I sign up for?", "No. SocialFlow AI, LeadFlow AI and ExecutiveFlow AI are done-for-you systems that we design and set up for your business, mostly in tools you already own such as Google Workspace, together with Make.com and AI. There is nothing to install."),
+    ("Are your products apps I sign up for?", "No. SocialFlow AI, ExecutiveFlow AI and LeadFlow AI are done-for-you systems that we design and set up for your business, mostly in tools you already own such as Google Workspace, together with Make.com and AI. There is nothing to install."),
     ("Will anything be sent or posted without my approval?", "Not unless you want it to be. By default, email replies stay as drafts, social posts wait for approval and meetings are only added to your calendar once you confirm them."),
     ("Which tools do you work with?", "Mainly Gmail, Google Sheets, Google Calendar, Google Forms and Make.com, with AI for summaries, classification and drafting. Other tools can often be connected; we confirm this during the consultation."),
-    ("How much does it cost?", "Setup packages start at KES 15,000, with a written quote before any work starts. Some tools, such as Make.com, charge for usage separately; we estimate these costs with you upfront. See the <a href=\"pricing.html\">pricing page</a>."),
+    ("How much does it cost?", "Each product has its own pricing: ExecutiveFlow AI setups start at KES 15,000, SocialFlow AI lists its plans on its own site, and LeadFlow AI and custom projects are quoted after a consultation. You always get a written quote before work starts, and third-party tool costs such as Make.com are explained upfront. See <a href=\"pricing.html\">pricing</a>."),
     ("Do you work with businesses outside Kenya?", "Yes. We work remotely with clients in Kenya and internationally, and can quote in KES or another currency."),
 ]
 
@@ -333,8 +343,8 @@ HOME_FAQ = [
 # ============================================================== PAGES
 def build_home():
     nodes = [("SocialFlow AI", "Social content planned, drafted and approved", "share", "pi--sf", SOCIALFLOW_URL, "50%", "15%"),
-             ("LeadFlow AI", "Every enquiry captured and followed up", "funnel", "pi--lf", "leadflow-ai.html", "24%", "80%"),
-             ("ExecutiveFlow AI", "Inbox, tasks and meetings organised", "inboxes", "pi--ef", "executiveflow-ai.html", "76%", "80%")]
+             ("ExecutiveFlow AI", "Inbox, tasks and meetings organised", "inboxes", "pi--ef", EXECUTIVEFLOW_URL, "24%", "80%"),
+             ("LeadFlow AI", "Every enquiry captured and followed up", "funnel", "pi--lf", LEADFLOW_URL, "76%", "80%")]
     eco_nodes = "".join(f'<a class="eco-node" href="{u}" style="left:{x};top:{y}" data-track="hero_{n.split()[0].lower()}"><span class="pi {c}">{ic(i)}</span><b>{n}</b><small>{d}</small></a>' for n, d, i, c, u, x, y in nodes)
     challenges = "".join(f'<div class="card card--flat problem reveal"><span class="ico">{ic(i)}</span><div><h3>{t}</h3><p class="mb-0">{d}</p></div></div>' for i, t, d in CHALLENGES)
     products = "".join(product_card(p, compact=True) for p in PRODUCTS)
@@ -346,11 +356,11 @@ def build_home():
   <div class="container hero-grid">
     <div>
       <span class="eyebrow">AI automation &amp; digital solutions</span>
-      <h1>Transform the Way Your Business <span class="grad">Works.</span></h1>
-      <p class="hero-copy">YomieVerse helps businesses simplify repetitive work, streamline operations and unlock new possibilities through intelligent AI automation.</p>
+      <h1>Work Smarter. Automate Better. <span class="grad">Grow Faster.</span></h1>
+      <p class="hero-copy">YomieVerse is an AI automation and digital workflow company. We build practical systems that take repetitive work off your team's plate, so your business runs smoother and has more time to grow.</p>
       <div class="btn-row">
         <a class="btn btn--primary" href="{BOOK}" data-track="cta_book_consultation">Book a Consultation {ic("arrow")}</a>
-        <a class="btn btn--ghost" href="solutions.html" data-track="cta_explore_solutions">Explore Our Solutions</a>
+        <a class="btn btn--ghost" href="#products" data-track="cta_explore_products">Explore Our Products</a>
       </div>
       <ul class="hero-notes">
         <li>{ic("hand")} You approve what goes out</li>
@@ -358,7 +368,7 @@ def build_home():
         <li>{ic("globe")} Kenya &amp; international clients</li>
       </ul>
     </div>
-    <div class="eco" role="group" aria-label="The three YomieVerse solutions connected to your business">
+    <div class="eco" role="group" aria-label="The three YomieVerse products connected to your business">
       <svg class="eco-lines" viewBox="0 0 100 92" preserveAspectRatio="none" aria-hidden="true">
         <path d="M50 22 C50 32, 50 36, 50 38"/><path d="M30 70 C35 64, 39 59, 43 55"/><path d="M70 70 C65 64, 61 59, 57 55"/>
       </svg>
@@ -395,9 +405,9 @@ def build_home():
 
 <section class="section" id="products">
   <div class="container">
-    <div class="head reveal"><span class="eyebrow">Our solutions</span><h2>Three focused AI products, one goal: less busywork</h2><p class="lead">Each product solves a specific problem. Start with the one you need most, then add more as you grow.</p></div>
+    <div class="head reveal"><span class="eyebrow">Our products</span><h2>Three independent AI products, one goal: less busywork</h2><p class="lead">Each product has its own focus, its own website and its own offering. Start with the one you need most, then add more as you grow.</p></div>
     <div class="grid g3">{products}</div>
-    <p class="center mt-2 reveal"><a class="btn btn--outline" href="solutions.html" data-track="cta_explore_solutions">Compare all solutions {ic("arrow")}</a></p>
+    <p class="center mt-2 reveal"><a class="btn btn--outline" href="products.html" data-track="cta_compare_products">Compare all products {ic("arrow")}</a></p>
   </div>
 </section>
 
@@ -436,15 +446,15 @@ def build_home():
          body, ld=[ORG, faq_ld(HOME_FAQ)])
 
 
-def build_solutions():
+def build_products():
     cards = "".join(product_card(p) for p in PRODUCTS)
     body = f'''
-{page_hero("Solutions", "Our solutions", "Three AI products for the work that slows you down",
-  "SocialFlow AI, LeadFlow AI and ExecutiveFlow AI each solve a specific business problem. Choose one to start, and add the others as your needs grow.",
+{page_hero("Our products", "Our products", "Three AI products for the work that slows you down",
+  "SocialFlow AI, ExecutiveFlow AI and LeadFlow AI are independent products, each with its own website, features and offering. Choose one to start, and add the others as your needs grow.",
   f'<div class="btn-row mt-2"><a class="btn btn--primary" href="{BOOK}" data-track="cta_book_consultation">Book a consultation</a><a class="btn btn--ghost" href="contact.html?type=demo#enquiry" data-track="cta_request_demo">Request a demo</a></div>')}
 <section class="section section--soft">
   <div class="container">
-    <div class="notice reveal" style="margin-bottom:2rem">{ic("info")}<div><p><strong>How our products are delivered.</strong> Each product is a done-for-you system that we design and set up for your business, mostly inside tools you already own (such as Google Workspace), connected with Make.com and AI. There's no app to download, and you receive training and documentation at handover.</p></div></div>
+    <div class="notice reveal" style="margin-bottom:2rem">{ic("info")}<div><p><strong>How our products are delivered.</strong> Each product has its own website where you can explore it in depth. Each product is a done-for-you system that we design and set up for your business, mostly inside tools you already own (such as Google Workspace), connected with Make.com and AI. There's no app to download, and you receive training and documentation at handover.</p></div></div>
     <div class="grid g3">{cards}</div>
   </div>
 </section>
@@ -455,9 +465,9 @@ def build_solutions():
       <h2>Start with one workflow, then grow</h2>
       <p class="lead">Most clients begin with the problem that costs them the most time each week.</p>
       <ul class="checks">
-        <li><strong>Drowning in email?</strong> Start with ExecutiveFlow AI.</li>
-        <li><strong>Losing enquiries?</strong> Start with LeadFlow AI.</li>
-        <li><strong>Struggling to post consistently?</strong> Start with SocialFlow AI.</li>
+        <li><strong>Drowning in email?</strong> Start with <a href="{EXECUTIVEFLOW_URL}">ExecutiveFlow AI</a>.</li>
+        <li><strong>Losing enquiries?</strong> Start with <a href="{LEADFLOW_URL}">LeadFlow AI</a>.</li>
+        <li><strong>Struggling to post consistently?</strong> Start with <a href="{SOCIALFLOW_URL}">SocialFlow AI</a>.</li>
         <li><strong>Something else entirely?</strong> We build <a href="services.html">custom automations</a> too.</li>
       </ul>
     </div>
@@ -472,169 +482,26 @@ def build_solutions():
 '''
     ld = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "item": {"@type": "Service", "name": p["name"], "description": p["desc"],
-         "provider": {"@type": "Organization", "name": "YomieVerse"}, "url": p["url"] if p["external"] else SITE_URL + "/" + p["url"]}} for i, p in enumerate(PRODUCTS)]}
-    page("solutions.html", "Solutions: SocialFlow AI, LeadFlow AI &amp; ExecutiveFlow AI | YomieVerse",
-         "Explore YomieVerse's AI products: SocialFlow AI for social media workflows, LeadFlow AI for lead capture and follow-up, and ExecutiveFlow AI for email, tasks and meetings.",
+         "provider": {"@type": "Organization", "name": "YomieVerse"}, "url": p["url"]}} for i, p in enumerate(PRODUCTS)]}
+    page("products.html", "Our Products: SocialFlow AI, ExecutiveFlow AI &amp; LeadFlow AI | YomieVerse",
+         "Explore YomieVerse's AI products: SocialFlow AI for social media workflows, ExecutiveFlow AI for email, tasks and meetings, and LeadFlow AI for lead capture and follow-up.",
          body, ld=[ld])
 
 
-def capability_grid(items, acc):
-    return '<div class="grid g3">' + "".join(f'<div class="card reveal {acc}"><span class="ico" style="background:var(--acc-bg);color:var(--acc)">{ic(i)}</span><h3>{t}</h3><p>{d}</p></div>' for i, t, d in items) + "</div>"
+def redirect(fn, target, name):
+    html = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>{name} | YomieVerse</title><meta name="robots" content="noindex, follow"><link rel="canonical" href="{target}"><meta http-equiv="refresh" content="0; url={target}"><script>location.replace("{target}"+location.hash);</script></head><body><p>{name} now has its own website: <a href="{target}">{target}</a></p></body></html>\n'''
+    open(os.path.join(OUT, fn), "w").write(html)
 
 
-def flow_html(nodes):
-    return '<div class="flow">' + "".join(f'<div class="flow-node reveal"><span class="ico">{ic(i)}</span><h4>{t}</h4><p>{d}</p></div>' for i, t, d in nodes) + "</div>"
+def build_redirects():
+    redirect("solutions.html", "products.html", "Our products")
+    redirect("leadflow-ai.html", LEADFLOW_URL, "LeadFlow AI")
+    redirect("executiveflow-ai.html", EXECUTIVEFLOW_URL, "ExecutiveFlow AI")
+    redirect("ai-executive-assistant.html", EXECUTIVEFLOW_URL, "ExecutiveFlow AI")
 
 
 def chips(items):
     return '<div class="chips">' + "".join(f'<span class="chip">{ic(i)}{t}</span>' for i, t in items) + "</div>"
-
-
-def build_leadflow():
-    caps = [("globe", "Website enquiry capture", "Enquiries from your website forms and inbox are collected automatically, in one place."),
-            ("tag", "Organisation and categorisation", "Each lead is labelled by service, source and urgency, so you can see what's coming in at a glance."),
-            ("spark", "AI-assisted qualification", "AI reads the enquiry and notes the need, budget signals and timeline to help you prioritise. You make the final call."),
-            ("sheet", "CRM and spreadsheet integration", "Leads are logged to Google Sheets or a CRM you already use, with no copy-pasting."),
-            ("bell", "Follow-up reminders", "Every lead gets a follow-up date, and you're reminded before anyone goes cold."),
-            ("mail", "Lead notifications", "New and high-priority enquiries alert you by email straight away."),
-            ("chart", "Pipeline reporting", "A simple weekly view of new, contacted, qualified and won leads.")]
-    pipe = '''<div class="pipe">
-      <div class="pipe-col"><h5>New <span>3</span></h5><div class="pipe-card">Office cleaning quote<small>Website form · today</small></div><div class="pipe-card">Apartment viewing<small>Email · today</small></div><div class="pipe-card">Monthly bookkeeping<small>Website form</small></div></div>
-      <div class="pipe-col"><h5>Contacted <span>2</span></h5><div class="pipe-card">Event photography<small>Follow-up Thu</small></div><div class="pipe-card">Logo redesign<small>Follow-up Fri</small></div></div>
-      <div class="pipe-col"><h5>Qualified <span>2</span></h5><div class="pipe-card">Staff training day<small>Proposal sent</small></div><div class="pipe-card">Website refresh<small>Call booked</small></div></div>
-      <div class="pipe-col"><h5>Won <span>1</span></h5><div class="pipe-card">Quarterly reports<small>This week</small></div></div>
-    </div>'''
-    lfaq = [("Where do the leads come from?", "Usually your website forms and your business inbox. Other sources, such as Google Forms or other form tools, can often be added; we confirm this during the consultation."),
-            ("Do I need a CRM?", "No. Many clients start with a Google Sheets lead tracker, which is free and easy to use. If you already use a CRM, we check whether it can be connected."),
-            ("Does the AI reply to leads by itself?", "Not by default. LeadFlow AI can prepare a first-response draft, but you review and send it. Automatic replies can be considered for simple acknowledgements if you want them."),
-            ("What does it cost?", "LeadFlow AI is quoted after a consultation, because it depends on your lead sources and how many leads you receive. Tool usage costs, such as Make.com, are explained upfront.")]
-    body = f'''
-<section class="page-hero"><div class="container hero-grid">
-  <div>
-    <p class="crumbs"><a href="index.html">Home</a> / <a href="solutions.html">Solutions</a> / LeadFlow AI</p>
-    <span class="status">Available as a custom setup</span>
-    <h1 style="margin-top:1rem">LeadFlow AI: capture every enquiry and follow up on time</h1>
-    <p>An intelligent lead management system that collects enquiries from your website and inbox, organises and qualifies them, reminds you to follow up and shows you where every lead stands.</p>
-    <div class="btn-row mt-2"><a class="btn btn--primary" href="contact.html?service=leadflow&amp;type=consultation#enquiry" data-track="cta_book_consultation">Book a consultation</a><a class="btn btn--ghost" href="contact.html?service=leadflow&amp;type=demo#enquiry" data-track="cta_request_demo">Request a demo</a></div>
-  </div>
-  <div class="acc-lf"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>LeadFlow AI · Pipeline</span></div><div class="frame-body">{pipe}</div></div>{sample_label(dark=True)}</div>
-</div></section>
-
-<section class="section">
-  <div class="container split split--top">
-    <div class="reveal"><span class="eyebrow">The problem</span><h2>Enquiries slip through the cracks</h2>
-      <p class="lead">Leads arrive by website form, email and WhatsApp. Without a system some are missed, replies are slow, and follow-ups depend on someone remembering.</p>
-      <p>Every missed or late reply is a potential client who may choose someone else. LeadFlow AI gives every enquiry a place, a priority and a next step.</p></div>
-    <div class="card card--flat acc-lf reveal"><h3>What changes</h3><ul class="checks mb-0">
-      <li>Every enquiry is captured and logged automatically</li><li>You see which leads need attention first</li>
-      <li>Follow-ups happen on time, not when someone remembers</li><li>A clear weekly view of your pipeline</li></ul></div>
-  </div>
-</section>
-
-<section class="section section--soft">
-  <div class="container">
-    <div class="head reveal"><span class="eyebrow">Capabilities</span><h2>What LeadFlow AI does</h2></div>
-    {capability_grid(caps, "acc-lf")}
-  </div>
-</section>
-
-<section class="section section--dark">
-  <div class="container">
-    <div class="head reveal"><span class="eyebrow">How it works</span><h2>From enquiry to follow-up, automatically</h2><p class="lead">Built with tools you can own and understand: your forms, Make.com, AI and Google Sheets or your CRM.</p></div>
-    {flow_html([("globe", "Enquiry arrives", "From a website form or email"), ("zap", "Make.com", "Picks it up and moves the data"), ("spark", "AI qualification", "Notes the need, urgency and next step"), ("sheet", "Lead tracker", "Logged to Google Sheets or your CRM"), ("bell", "You follow up", "Alerts, reminders and a weekly report")])}
-  </div>
-</section>
-
-<section class="section">
-  <div class="container split split--top">
-    <div class="reveal"><span class="eyebrow">Ideal for</span><h2>Who LeadFlow AI is for</h2>
-      {chips([("briefcase", "Service businesses"), ("home", "Real estate companies"), ("user-check", "Consultants"), ("megaphone", "Agencies"), ("users", "Sales teams")])}
-      <p class="mt-2">If you receive enquiries every week and want a reliable way to respond and follow up, LeadFlow AI is built for you.</p></div>
-    <div class="reveal"><span class="eyebrow">Questions</span>{faq(lfaq)}</div>
-  </div>
-</section>
-{cta("See how LeadFlow AI would work for you", "Tell us where your enquiries come from today. We'll show you how they could be captured, qualified and followed up automatically.")}
-'''
-    ld = {"@context": "https://schema.org", "@type": "Service", "name": "LeadFlow AI", "serviceType": "Lead management and follow-up automation",
-          "provider": {"@type": "Organization", "name": "YomieVerse"}, "areaServed": ["Kenya", "Worldwide"], "description": PRODUCTS[1]["desc"]}
-    page("leadflow-ai.html", "LeadFlow AI: Lead Capture &amp; Follow-up Automation | YomieVerse",
-         "LeadFlow AI captures website and email enquiries, organises and qualifies leads with AI, reminds you to follow up and reports on your pipeline. Available as a custom setup.",
-         body, ld=[ld, faq_ld(lfaq)])
-
-
-def build_executiveflow():
-    caps = [("inboxes", "Email organisation and summarisation", "New emails are read on a schedule, summarised in plain English and labelled by priority."),
-            ("check", "Task extraction", "Requests and stated deadlines become tasks with due dates in your task list."),
-            ("cal", "Calendar and meeting coordination", "Meeting requests are checked against your Google Calendar and added only after you approve them."),
-            ("cog", "Administrative workflow automation", "Routine admin such as logging, filing and status updates runs in the background."),
-            ("sun", "Daily briefings", "Each morning you receive a short briefing: important emails, open tasks, deadlines, meetings and follow-ups."),
-            ("repeat", "Follow-up reminders", "Conversations that need checking back on get a date, so nothing goes quiet by accident."),
-            ("pen", "Email drafting with human approval", "When a reply is needed, a draft is saved in the Gmail thread. You edit and send it yourself.")]
-    rows = [("Revised quote needed by 10am", "Client request · task created", "Urgent", "ui-tag--hot"),
-            ("Planning call moved to Monday", "Meeting · awaiting your approval", "High", "ui-tag--warm"),
-            ("Supplier invoice due Friday", "Finance · reminder set", "Normal", "ui-tag--ok"),
-            ("Question about your services", "Reply draft ready in Gmail", "Normal", "ui-tag--ok")]
-    ui = "".join(f'<div class="ui-row"><span class="ui-av">{chr(64 + n)}</span><div><b>{t}</b><small>{s}</small></div><span class="ui-tag {c}">{p}</span></div>' for n, (t, s, p, c) in enumerate(rows, 1))
-    efaq = [("Does it work with my Gmail?", "Yes. ExecutiveFlow AI works with Gmail and Google Workspace accounts, together with Google Sheets and Google Calendar. Other email providers can be discussed during the consultation."),
-            ("Will it send emails or book meetings on its own?", "No. Replies are saved as drafts for you to review and send, and calendar events are only created after you approve them."),
-            ("Where is my data kept?", "Everything runs in your own Google and Make.com accounts. We use only the access the workflow needs, and you can revoke it at any time."),
-            ("How much does it cost?", "Setups start at KES 15,000 (Starter), with Professional at KES 30,000 and Business from KES 50,000. Make.com usage is charged separately by Make. See <a href=\"pricing.html\">pricing</a>.")]
-    body = f'''
-<section class="page-hero"><div class="container hero-grid">
-  <div>
-    <p class="crumbs"><a href="index.html">Home</a> / <a href="solutions.html">Solutions</a> / ExecutiveFlow AI</p>
-    <span class="status">Available as a custom setup</span>
-    <h1 style="margin-top:1rem">ExecutiveFlow AI: your inbox, tasks and meetings, organised</h1>
-    <p>An AI-powered executive assistant that works in the background of your Google account. It reads, prioritises and organises your email, prepares replies, tracks tasks and follow-ups, and briefs you every morning. You keep the final say.</p>
-    <div class="btn-row mt-2"><a class="btn btn--primary" href="contact.html?service=executiveflow&amp;type=consultation#enquiry" data-track="cta_book_consultation">Book a consultation</a><a class="btn btn--ghost" href="contact.html?service=executiveflow&amp;type=demo#enquiry" data-track="cta_request_demo">Request a demo</a></div>
-  </div>
-  <div class="acc-ef"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>ExecutiveFlow AI · Today</span></div><div class="frame-body">{ui}<div class="ui-row" style="grid-template-columns:1fr;background:var(--teal-100);border-color:#b6e8de"><div><b>07:00 Morning briefing</b><small>1 urgent item · 4 open tasks · 1 meeting awaiting approval</small></div></div></div></div>{sample_label(dark=True)}</div>
-</div></section>
-
-<section class="section">
-  <div class="container split split--top">
-    <div class="reveal"><span class="eyebrow">The problem</span><h2>Your inbox is running your day</h2>
-      <p class="lead">Important emails get buried among routine messages, deadlines hide in long threads, and follow-ups slip.</p>
-      <p>Hours go into sorting, reading and replying, time that should go into clients, strategy and growth. ExecutiveFlow AI does the sorting for you and turns email into a clear plan.</p></div>
-    <div class="card card--flat acc-ef reveal"><h3>Designed to be safe and dependable</h3><ul class="checks mb-0">
-      <li>No automatic sending: replies stay as drafts until you send them</li><li>No surprise bookings: calendar events need your approval</li>
-      <li>No duplicates: each email is processed once</li><li>No invented details: only deadlines and commitments stated in the email are recorded</li>
-      <li>Errors are logged, and you're alerted if something fails</li><li>Your accounts, your data</li></ul></div>
-  </div>
-</section>
-
-<section class="section section--soft">
-  <div class="container">
-    <div class="head reveal"><span class="eyebrow">Capabilities</span><h2>What ExecutiveFlow AI does</h2></div>
-    {capability_grid(caps, "acc-ef")}
-  </div>
-</section>
-
-<section class="section section--dark">
-  <div class="container">
-    <div class="head reveal"><span class="eyebrow">How it works</span><h2>From inbox to a clear plan</h2><p class="lead">Each part has one clear job, and you approve anything that leaves your business.</p></div>
-    {flow_html([("mail", "Gmail", "New emails arrive; reply drafts are saved in the thread"), ("zap", "Make.com", "Checks the inbox on a schedule and moves the data"), ("spark", "AI processing", "Summarises, prioritises, extracts tasks and drafts replies"), ("sheet", "Sheets &amp; Calendar", "Your dashboard, tasks, follow-ups and calendar checks"), ("hand", "Your approval", "You review, edit and send. Nothing goes out without you")])}
-  </div>
-</section>
-
-<section class="section">
-  <div class="container split split--top">
-    <div class="reveal"><span class="eyebrow">Ideal for</span><h2>Who ExecutiveFlow AI is for</h2>
-      {chips([("rocket", "Entrepreneurs"), ("briefcase", "Executives"), ("user-check", "Consultants"), ("clock", "Busy professionals"), ("users", "Virtual assistants")])}
-      <p class="mt-2">If email takes a large part of your day, ExecutiveFlow AI can give much of that time back.</p>
-      <p><a class="link-arrow" href="pricing.html">See ExecutiveFlow AI packages {ic("arrow")}</a></p></div>
-    <div class="reveal"><span class="eyebrow">Questions</span>{faq(efaq)}</div>
-  </div>
-</section>
-{cta("Want ExecutiveFlow AI on your inbox?", "We'll set it up in your own Google account, test it with you and hand over full documentation.")}
-'''
-    ld = {"@context": "https://schema.org", "@type": "Service", "name": "ExecutiveFlow AI", "serviceType": "AI executive assistant and email automation",
-          "provider": {"@type": "Organization", "name": "YomieVerse"}, "areaServed": ["Kenya", "Worldwide"], "description": PRODUCTS[2]["desc"]}
-    page("executiveflow-ai.html", "ExecutiveFlow AI: AI Executive Assistant for Email, Tasks &amp; Meetings | YomieVerse",
-         "ExecutiveFlow AI organises and summarises your Gmail, extracts tasks, coordinates meetings, drafts replies for your approval and sends a daily briefing. Available as a custom setup.",
-         body, ld=[ld, faq_ld(efaq)])
-    old = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>ExecutiveFlow AI | YomieVerse</title><meta name="robots" content="noindex, follow"><link rel="canonical" href="{SITE_URL}/executiveflow-ai.html"><meta http-equiv="refresh" content="0; url=executiveflow-ai.html"><script>location.replace("executiveflow-ai.html"+location.hash);</script></head><body><p>The AI Executive Assistant is now <a href="executiveflow-ai.html">ExecutiveFlow AI</a>.</p></body></html>\n'''
-    open(os.path.join(OUT, "ai-executive-assistant.html"), "w").write(old)
 
 
 SERVICES = [
@@ -657,12 +524,12 @@ SERVICES = [
      "Enquiries arrive in different places, some are missed and follow-ups depend on memory.",
      "An automated enquiry pipeline that captures every lead, organises and qualifies it, and reminds you to follow up.",
      "Form submissions and enquiry emails are captured automatically, details are extracted and logged to a lead tracker, you're notified, and follow-up reminders are scheduled.",
-     ["Every enquiry captured and tracked", "Faster first responses", "Follow-ups that happen on time"], ("LeadFlow AI", "leadflow-ai.html")),
+     ["Every enquiry captured and tracked", "Faster first responses", "Follow-ups that happen on time"], ("LeadFlow AI", LEADFLOW_URL)),
     ("executive", "inboxes", "Executive and administrative automation",
      "Email, meeting requests and to-dos pile up, and important items get lost in the noise.",
      "An AI assistant system that organises email, extracts tasks, coordinates meetings, drafts replies for approval and sends a daily briefing.",
      "Make.com checks Gmail on a schedule. AI summarises and prioritises each email, tasks and follow-ups go to Google Sheets, meeting requests are checked against Google Calendar, and drafts wait in Gmail for you.",
-     ["Less time sorting email", "Urgent issues surfaced straight away", "A clear plan every morning"], ("ExecutiveFlow AI", "executiveflow-ai.html")),
+     ["Less time sorting email", "Urgent issues surfaced straight away", "A clear plan every morning"], ("ExecutiveFlow AI", EXECUTIVEFLOW_URL)),
     ("custom", "puzzle", "Custom AI-assisted business solutions",
      "Some processes don't fit any off-the-shelf product, so they stay manual and slow.",
      "A tailored solution designed around your process, combining automation and AI only where it adds real value.",
@@ -732,48 +599,36 @@ def build_process():
 
 
 def build_pricing():
-    plans = [("starter", "Starter", "KES 15,000", "", "For individuals and small teams who want a clearer inbox.",
-              ["Basic email automation", "Email summaries", "Priority detection", "Google Sheets tracking", "Initial setup and testing"], False),
-             ("professional", "Professional", "KES 30,000", "", "The complete ExecutiveFlow AI assistant for busy professionals.",
-              ["Everything in Starter", "AI response drafting", "Task extraction", "Follow-up tracking", "Calendar assistance", "Custom dashboard"], True),
-             ("business", "Business", "KES 50,000", "+", "Tailored automation across your team's processes.",
-              ["Customised workflows", "Multiple integrations", "Advanced reporting", "Business-specific automation", "Implementation and training"], False)]
-    cards = "".join(f'''<article class="plan{" plan--pop" if pop else ""} reveal">{'<span class="pop">Most popular</span>' if pop else ""}
-      <h3>{name}</h3><div class="price">{price}<small>{plus}</small></div><p class="small muted mb-0">One-off setup · starting price</p>
-      <p class="mt-1">{forwho}</p><ul class="checks">{"".join(f"<li>{f}</li>" for f in feats)}</ul>
-      <a class="btn {"btn--primary" if pop else "btn--outline"} btn--block" href="contact.html?service=executiveflow&amp;type=consultation#enquiry" data-track="pricing_{key}">Choose {name}</a></article>''' for key, name, price, plus, forwho, feats, pop in plans)
-    pfaq = [("Is the price a one-off fee?", "Yes. Package prices cover design, setup, testing and handover. Monthly maintenance is optional and quoted separately."),
-            ("What other costs should I expect?", "Tools such as Make.com charge based on how much the automation runs, and some AI features have usage costs. For many small businesses this is a modest monthly amount; we estimate it with you before building. Usage is never unlimited."),
-            ("Can I start small and upgrade later?", "Yes. Many clients start with Starter and add drafting, tasks and calendar features later. Work already done carries over."),
-            ("How are LeadFlow AI and custom projects priced?", "They're quoted after a consultation, because the work depends on your lead sources, tools and volumes. You receive a written quote before anything starts."),
+    cards = [
+        ("acc-sf", "share", "SocialFlow AI", "Plans for social media content workflows are listed on the SocialFlow AI website.", SOCIALFLOW_URL + "#pricing", "See SocialFlow AI pricing"),
+        ("acc-ef", "inboxes", "ExecutiveFlow AI", "One-off setup packages from KES 15,000 (Starter), KES 30,000 (Professional) and KES 50,000+ (Business).", EXECUTIVEFLOW_URL + "#pricing", "See ExecutiveFlow AI packages"),
+        ("acc-lf", "funnel", "LeadFlow AI", "Quoted after a short consultation, based on your lead sources, tools and volumes.", LEADFLOW_URL + "#pricing", "See how LeadFlow AI is priced"),
+    ]
+    html = "".join(f'''<div class="card reveal {acc}"><span class="ico" style="background:var(--acc-bg);color:var(--acc)">{ic(i)}</span><h3>{n}</h3><p>{d}</p><a class="link-arrow" href="{u}">{l} {ic("ext")}</a></div>''' for acc, i, n, d, u, l in cards)
+    pfaq = [("Why is pricing on each product's website?", "Each product is independent and priced for the work it does, so its packages live with its features and FAQs. This page brings them together."),
+            ("What other costs should I expect?", "Tools such as Make.com charge based on how much an automation runs, and some AI features have usage costs. We estimate these with you before building. Usage is never unlimited."),
+            ("How are custom projects priced?", "Custom automation, workflow integration and process automation are quoted after a consultation. You receive a written quote before anything starts."),
+            ("Is maintenance included?", "Setup prices are one-off. Optional monthly maintenance (monitoring, adjustments and support) is quoted separately, based on the size of your system."),
             ("Do you accept international clients?", "Yes. We can quote in KES or an equivalent amount in your currency.")]
     body = f'''
-{page_hero("Pricing", "Pricing", "Clear starting prices, tailored quotes",
-  "Transparent setup packages in Kenyan shillings. Your final quote depends on your workflow and is confirmed in writing before any work starts.")}
+{page_hero("Pricing", "Pricing", "Pricing by product",
+  "Each YomieVerse product has its own pricing on its own website. Custom automation work is quoted after a consultation, and you always receive a written quote before work starts.")}
 <section class="section section--soft">
   <div class="container">
-    <div class="head reveal"><span class="eyebrow">ExecutiveFlow AI &amp; email automation</span><h2>Setup packages</h2></div>
-    <div class="plans">{cards}</div>
-    <div class="notice mt-3 reveal">{ic("info")}<div><p><strong>Final pricing depends on your workflow:</strong> complexity, the number of integrations, expected usage and implementation requirements. You receive a written quote before work begins.</p><p>Third-party tool costs (for example Make.com, which charges by usage) are separate and paid directly by you. We help you choose the right plan.</p></div></div>
-  </div>
-</section>
-<section class="section">
-  <div class="container">
-    <div class="grid g3">
-      <div class="card reveal acc-sf"><span class="ico" style="background:var(--acc-bg);color:var(--acc)">{ic("share")}</span><h3>SocialFlow AI</h3><p>Pricing for social media workflows is listed on the SocialFlow AI page.</p><a class="link-arrow" href="{SOCIALFLOW_URL}">See SocialFlow AI pricing {ic("ext")}</a></div>
-      <div class="card reveal acc-lf"><span class="ico" style="background:var(--acc-bg);color:var(--acc)">{ic("funnel")}</span><h3>LeadFlow AI &amp; custom projects</h3><p>Quoted after a short consultation, based on your lead sources, tools and volumes.</p><a class="link-arrow" href="contact.html?service=leadflow&amp;type=consultation#enquiry">Request a quote {ic("arrow")}</a></div>
+    <div class="grid g3">{html}</div>
+    <div class="grid g2 mt-3">
+      <div class="card reveal"><span class="ico">{ic("puzzle")}</span><h3>Custom automation projects</h3><p>Business process automation, AI workflow integration and custom AI-assisted solutions are quoted after a consultation.</p><a class="link-arrow" href="contact.html?service=custom&amp;type=consultation#enquiry">Request a quote {ic("arrow")}</a></div>
       <div class="card reveal"><span class="ico">{ic("tool")}</span><h3>Optional monthly maintenance</h3><p>Monitoring, adjustments, prompt tuning and support after handover, priced by the size of your system.</p><a class="link-arrow" href="contact.html?type=general#enquiry">Ask about maintenance {ic("arrow")}</a></div>
     </div>
+    <div class="notice mt-3 reveal">{ic("info")}<div><p><strong>Third-party tool costs</strong> (for example Make.com, which charges by usage) are separate and paid directly by you. We help you choose the right plan.</p></div></div>
   </div>
 </section>
-<section class="section section--soft"><div class="container"><div class="head reveal"><span class="eyebrow">Pricing FAQ</span><h2>Pricing questions</h2></div>{faq(pfaq)}</div></section>
+<section class="section"><div class="container"><div class="head reveal"><span class="eyebrow">Pricing FAQ</span><h2>Pricing questions</h2></div>{faq(pfaq)}</div></section>
 {cta("Get a quote for your business", "Share a little about your processes and we'll recommend the right starting point.")}
 '''
-    offers = {"@context": "https://schema.org", "@type": "Service", "name": "ExecutiveFlow AI setup packages", "provider": {"@type": "Organization", "name": "YomieVerse"},
-              "offers": [{"@type": "Offer", "name": p[1], "price": p[2].replace("KES ", "").replace(",", ""), "priceCurrency": "KES"} for p in plans]}
-    page("pricing.html", "Pricing: AI Automation Packages from KES 15,000 | YomieVerse",
-         "ExecutiveFlow AI and email automation packages: Starter KES 15,000, Professional KES 30,000, Business from KES 50,000, plus optional maintenance. LeadFlow AI and custom work quoted on request.",
-         body, ld=[offers, faq_ld(pfaq)])
+    page("pricing.html", "Pricing by Product | YomieVerse",
+         "Pricing for YomieVerse products: SocialFlow AI plans, ExecutiveFlow AI setup packages from KES 15,000, and LeadFlow AI and custom automation quoted on request.",
+         body, ld=[faq_ld(pfaq)])
 
 
 def build_about():
@@ -789,7 +644,8 @@ def build_about():
   "We believe AI shouldn't be reserved for large companies with big technology budgets. It should help every business work smarter, save time and grow.")}
 <section class="section">
   <div class="container split split--top">
-    <div class="reveal"><span class="eyebrow">Our purpose</span><h2>Why YomieVerse exists</h2>
+    <div class="reveal"><span class="eyebrow">Our mission</span><h2>Why YomieVerse exists</h2>
+      <p class="lead">Our mission is to make practical AI automation accessible to growing businesses, so their people spend less time on repetitive work and more time on growth.</p>
       <p>Many entrepreneurs and small teams spend hours each week on work that follows the same pattern: answering similar emails, chasing enquiries, preparing posts and updating spreadsheets. AI and automation can now handle much of that, but the tools can feel complicated and out of reach.</p>
       <p>YomieVerse closes that gap. We turn practical AI into simple, reliable systems built around how each business already works, so people spend less time on repetitive tasks and more time on the work that grows the business.</p></div>
     <div class="reveal"><span class="eyebrow">Our vision</span><h2>Where we're going</h2>
@@ -866,7 +722,7 @@ def build_contact():
         <h2 style="font-size:1.6rem">Thank you<span id="done-name"></span>. Your enquiry has been sent.</h2>
         <p class="muted">Here's what happens next:</p>
         <ol><li>We read your enquiry and look at the challenge you described.</li><li>We contact you by <strong id="done-how">email</strong>, usually within one working day.</li><li>If it's a good fit, we arrange a short consultation or demo.</li></ol>
-        <div class="btn-row" style="justify-content:center"><a class="btn btn--outline" href="solutions.html">Explore our solutions</a><a class="btn btn--wa" href="{wa("Hello YomieVerse, I've just sent an enquiry on your website.")}" target="_blank" rel="noopener" data-track="whatsapp_click">{WA_SVG} Message us on WhatsApp</a></div>
+        <div class="btn-row" style="justify-content:center"><a class="btn btn--outline" href="products.html">Explore our products</a><a class="btn btn--wa" href="{wa("Hello YomieVerse, I've just sent an enquiry on your website.")}" target="_blank" rel="noopener" data-track="whatsapp_click">{WA_SVG} Message us on WhatsApp</a></div>
       </div>
     </div>
     <aside>
@@ -897,13 +753,13 @@ def build_misc():
 <section class="page-hero" style="text-align:center"><div class="container">
   <span class="eyebrow">Enquiry received</span><h1 style="margin-inline:auto">Thank you, we've received your enquiry</h1>
   <p style="margin-inline:auto">We'll reply using your preferred contact method, usually within one working day. For anything urgent, message us on WhatsApp.</p>
-  <div class="btn-row mt-2" style="justify-content:center"><a class="btn btn--wa" href="{wa()}" target="_blank" rel="noopener">{WA_SVG} WhatsApp</a><a class="btn btn--ghost" href="solutions.html">Explore our solutions</a><a class="btn btn--ghost" href="index.html">Back to home</a></div>
+  <div class="btn-row mt-2" style="justify-content:center"><a class="btn btn--wa" href="{wa()}" target="_blank" rel="noopener">{WA_SVG} WhatsApp</a><a class="btn btn--ghost" href="products.html">Explore our products</a><a class="btn btn--ghost" href="index.html">Back to home</a></div>
 </div></section>''', noindex=True)
     page("404.html", "Page Not Found | YomieVerse", "Page not found.", f'''
 <section class="page-hero" style="text-align:center"><div class="container">
   <span class="eyebrow">Error 404</span><h1 style="margin-inline:auto">We couldn't find that page</h1>
   <p style="margin-inline:auto">The link may be out of date. Try one of these instead.</p>
-  <div class="btn-row mt-2" style="justify-content:center"><a class="btn btn--primary" href="index.html">Home</a><a class="btn btn--ghost" href="solutions.html">Solutions</a><a class="btn btn--ghost" href="contact.html">Contact</a></div>
+  <div class="btn-row mt-2" style="justify-content:center"><a class="btn btn--primary" href="index.html">Home</a><a class="btn btn--ghost" href="products.html">Our products</a><a class="btn btn--ghost" href="contact.html">Contact</a></div>
 </div></section>''', noindex=True)
     page("privacy.html", "Privacy Notice | YomieVerse", "How YomieVerse handles the information you share through this website.", f'''
 {page_hero("Privacy notice", "Privacy", "Privacy notice", "How we handle the information you share with us through this website.")}
@@ -922,7 +778,7 @@ def build_misc():
 
 def build_seo():
     today = datetime.date.today().isoformat()
-    pages = [("", "1.0"), ("solutions.html", "0.9"), ("leadflow-ai.html", "0.8"), ("executiveflow-ai.html", "0.8"), ("services.html", "0.8"),
+    pages = [("", "1.0"), ("products.html", "0.9"), ("services.html", "0.8"),
              ("how-it-works.html", "0.7"), ("pricing.html", "0.8"), ("about.html", "0.7"), ("contact.html", "0.9"), ("privacy.html", "0.3")]
     urls = "".join(f"  <url><loc>{SITE_URL}/{p}</loc><lastmod>{today}</lastmod><priority>{pr}</priority></url>\n" for p, pr in pages)
     open(os.path.join(OUT, "sitemap.xml"), "w").write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
@@ -930,6 +786,6 @@ def build_seo():
 
 
 if __name__ == "__main__":
-    build_home(); build_solutions(); build_leadflow(); build_executiveflow(); build_services()
+    build_home(); build_products(); build_redirects(); build_services()
     build_process(); build_pricing(); build_about(); build_contact(); build_misc(); build_seo()
     print("Built YomieVerse site in", OUT)

@@ -61,6 +61,19 @@
     if (el.hasAttribute("data-email-show")) el.textContent = SITE.email;
   });
 
+  /* ---------- Dropdown menus (Our Products) ---------- */
+  $$(".dd-toggle").forEach(function (b) {
+    var item = b.closest(".has-dd");
+    b.addEventListener("click", function (e) {
+      e.preventDefault();
+      var open = b.getAttribute("aria-expanded") !== "true";
+      $$(".dd-toggle[aria-expanded=true]").forEach(function (o) { if (o !== b) { o.setAttribute("aria-expanded", "false"); o.closest(".has-dd").classList.remove("dd-open"); } });
+      b.setAttribute("aria-expanded", String(open)); item.classList.toggle("dd-open", open);
+    });
+  });
+  document.addEventListener("click", function (e) { if (!e.target.closest(".has-dd")) $$(".has-dd.dd-open").forEach(function (i) { i.classList.remove("dd-open"); i.querySelector(".dd-toggle").setAttribute("aria-expanded", "false"); }); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") $$(".has-dd.dd-open").forEach(function (i) { i.classList.remove("dd-open"); var t = i.querySelector(".dd-toggle"); t.setAttribute("aria-expanded", "false"); if (i.contains(document.activeElement)) t.focus(); }); });
+
   /* ---------- Booking link (optional) ---------- */
   if (SITE.bookingUrl) $$("[data-booking]").forEach(function (el) { el.hidden = false; el.href = SITE.bookingUrl; });
 
@@ -118,7 +131,7 @@
 
   var msgBox = $("#form-msg"), btn = form.querySelector("[type=submit]"), btnHtml = btn ? btn.innerHTML : "";
   function showMsg(kind, html) { msgBox.hidden = false; msgBox.className = "form-msg form-msg--" + kind; msgBox.innerHTML = html; msgBox.setAttribute("role", kind === "err" ? "alert" : "status"); }
-  function waLink() { return "https://wa.me/" + (SITE.whatsapp || "") + "?text=" + encodeURIComponent("Hello YomieVerse, I tried to send an enquiry on your website."); }
+  function waLink() { return "https://wa.me/" + (SITE.whatsapp || "") + "?text=" + encodeURIComponent("Hello " + (SITE.brand || "YomieVerse") + ", I tried to send an enquiry on your website."); }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -129,7 +142,7 @@
 
     var data = {};
     new FormData(form).forEach(function (v, k) { if (k !== "_next") data[k] = data[k] ? data[k] + ", " + v : v; });
-    data._subject = "New YomieVerse enquiry — " + (data["Service of interest"] || "General") + " (" + (data["Request type"] || "Enquiry") + ")";
+    data._subject = "New " + (SITE.brand || "YomieVerse") + " enquiry — " + (data["Service of interest"] || data["Product"] || "General") + " (" + (data["Request type"] || "Enquiry") + ")";
     btn.disabled = true; btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Sending…';
     var ctrl = window.AbortController ? new AbortController() : null, timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 20000);
 
