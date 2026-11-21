@@ -1,6 +1,6 @@
-# YomieVerse
+# Naomi Mwangi: main website
 
-The parent-company website for YomieVerse, an AI automation and digital workflow brand. It presents three independent products, each with its own website:
+The main website for Naomi Mwangi, AI automation specialist. It is written in the first person and is hosted in the `Yomie-Verse` repository (the brand's former name, kept so existing links keep working). It presents three independent products, each with its own website:
 
 - **SocialFlow AI**: https://yomie-commits.github.io/SocialFlowAI/
 - **ExecutiveFlow AI**: https://yomie-commits.github.io/ExecutiveFlowAI/

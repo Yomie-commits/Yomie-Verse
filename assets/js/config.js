@@ -1,9 +1,9 @@
 /* =========================================================
-   YomieVerse site settings — edit here, no rebuild needed.
+   Naomi Mwangi site settings — edit here, no rebuild needed.
    ========================================================= */
 window.SITE = {
   /* Brand name used in enquiry email subjects and WhatsApp messages. */
-  brand: "YomieVerse",
+  brand: "Naomi Mwangi",
 
   /* Where enquiry forms are delivered, through FormSubmit (free, no account).
      The first enquiry sends an activation email to this address — click the

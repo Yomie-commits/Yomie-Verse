@@ -1,4 +1,4 @@
-/* YomieVerse — navigation, reveal, enquiry form, analytics hooks */
+/* Naomi Mwangi — navigation, reveal, enquiry form, analytics hooks */
 (function () {
   "use strict";
   window.__yv = true;
@@ -131,7 +131,7 @@
 
   var msgBox = $("#form-msg"), btn = form.querySelector("[type=submit]"), btnHtml = btn ? btn.innerHTML : "";
   function showMsg(kind, html) { msgBox.hidden = false; msgBox.className = "form-msg form-msg--" + kind; msgBox.innerHTML = html; msgBox.setAttribute("role", kind === "err" ? "alert" : "status"); }
-  function waLink() { return "https://wa.me/" + (SITE.whatsapp || "") + "?text=" + encodeURIComponent("Hello " + (SITE.brand || "YomieVerse") + ", I tried to send an enquiry on your website."); }
+  function waLink() { return "https://wa.me/" + (SITE.whatsapp || "") + "?text=" + encodeURIComponent("Hello " + (SITE.brand || "Naomi Mwangi") + ", I tried to send an enquiry on your website."); }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -142,7 +142,7 @@
 
     var data = {};
     new FormData(form).forEach(function (v, k) { if (k !== "_next") data[k] = data[k] ? data[k] + ", " + v : v; });
-    data._subject = "New " + (SITE.brand || "YomieVerse") + " enquiry — " + (data["Service of interest"] || data["Product"] || "General") + " (" + (data["Request type"] || "Enquiry") + ")";
+    data._subject = "New " + (SITE.brand || "Naomi Mwangi") + " enquiry — " + (data["Service of interest"] || data["Product"] || "General") + " (" + (data["Request type"] || "Enquiry") + ")";
     btn.disabled = true; btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Sending…';
     var ctrl = window.AbortController ? new AbortController() : null, timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 20000);
 
