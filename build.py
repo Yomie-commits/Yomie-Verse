@@ -17,10 +17,11 @@ SITE_URL = "https://yomie-commits.github.io/Yomie-Verse"   # no trailing slash
 SOCIALFLOW_URL = "https://yomie-commits.github.io/SocialFlowAI/"
 EXECUTIVEFLOW_URL = "https://yomie-commits.github.io/ExecutiveFlowAI/"
 LEADFLOW_URL = "https://yomie-commits.github.io/LeadFlowAI/"
+EDUFLOW_URL = "https://yomie-commits.github.io/EduFlowAI/"
 WHATSAPP = "254792002230"
 WHATSAPP_DISPLAY = "+254 792 002 230"
 LINKEDIN = "https://www.linkedin.com/in/naomi-njeri-m/"
-ASSET_VERSION = "4"
+ASSET_VERSION = "5"
 OUT = os.path.dirname(os.path.abspath(__file__))
 # ---------------------------------------------------------------------------
 
@@ -140,6 +141,7 @@ def footer():
         <li><a href="{SOCIALFLOW_URL}">SocialFlow AI</a></li>
         <li><a href="{EXECUTIVEFLOW_URL}">ExecutiveFlow AI</a></li>
         <li><a href="{LEADFLOW_URL}">LeadFlow AI</a></li>
+        <li><a href="{EDUFLOW_URL}">EduFlow AI</a></li>
         <li><a href="products.html">Compare products</a></li></ul></div>
       <div><h3>Company</h3><ul>
         <li><a href="about.html">About me</a></li>
@@ -170,7 +172,8 @@ ORG = {"@context": "https://schema.org", "@type": "ProfessionalService", "name":
        "address": {"@type": "PostalAddress", "addressLocality": "Nairobi", "addressCountry": "KE"},
        "areaServed": ["Kenya", "Worldwide"], "sameAs": [LINKEDIN],
        "brand": [{"@type": "Brand", "name": "SocialFlow AI", "url": SOCIALFLOW_URL}, {"@type": "Brand", "name": "ExecutiveFlow AI", "url": EXECUTIVEFLOW_URL},
-                 {"@type": "Brand", "name": "LeadFlow AI", "url": LEADFLOW_URL}]}
+                 {"@type": "Brand", "name": "LeadFlow AI", "url": LEADFLOW_URL},
+                 {"@type": "Brand", "name": "EduFlow AI", "url": EDUFLOW_URL}]}
 
 
 def page(fn, title, desc, body, ld=None, noindex=False):
@@ -270,7 +273,14 @@ PRODUCTS = [
      "problem": "Enquiries arrive through forms, email and WhatsApp. Without a system some are missed, replies are slow and follow-ups depend on memory.",
      "caps": ["Website enquiry capture", "Lead organisation and categorisation", "AI-assisted lead qualification", "CRM and spreadsheet integration", "Automated follow-up reminders", "Lead notifications", "Sales pipeline reporting"],
      "ideal": "Service businesses, real estate companies, consultants, agencies and sales teams.",
-     "url": LEADFLOW_URL, "external": True, "status": "Available as a custom setup"}
+     "url": LEADFLOW_URL, "external": True, "status": "Available as a custom setup"},
+    {"key": "eduflow", "acc": "acc-edu", "pi": "pi--edu", "short": "Admissions, parent messages and fee reminders for schools", "icon": "school", "name": "EduFlow AI",
+     "tagline": "School admissions and parent communication, organised.",
+     "desc": "An AI-assisted school office system for Kenyan private schools. It captures admissions enquiries and applications, drafts parent replies and announcements for staff approval, prepares fee reminders and sends leaders a daily briefing.",
+     "problem": "School offices juggle enquiries, applications, parent messages and fee follow-ups by phone, WhatsApp and paper, so replies are slow and nobody sees the full picture.",
+     "caps": ["Online admissions enquiries and applications", "AI-sorted enquiries with suggested replies", "Parent announcements with staff approval", "Fee balances and reminder batches", "Daily briefing for school leaders", "Role-based access for staff", "English and Kiswahili messages"],
+     "ideal": "Private schools, daycares, colleges and training institutions in Kenya.",
+     "url": EDUFLOW_URL, "external": True, "status": "Pilots open"}
 ]
 
 
@@ -319,7 +329,7 @@ INDUSTRIES = [
     ("briefcase", "Startups & SMEs", "Put simple, reliable systems in place as you grow."),
     ("user-check", "Consultants & independent professionals", "Stay on top of clients, meetings and proposals."),
     ("megaphone", "Marketing agencies", "Plan, approve and report on content for many clients."),
-    ("school", "Schools & educational institutions", "Handle enquiries, admissions communication and admin."),
+    ("school", "Schools & educational institutions", "Handle enquiries, admissions, parent communication and fee reminders with EduFlow AI."),
     ("home", "Real estate", "Capture property enquiries and follow up quickly."),
     ("scale", "Professional services", "Organise correspondence, documents and deadlines."),
     ("globe", "NGOs & organisations", "Coordinate partners, reporting and internal tasks."),
@@ -336,19 +346,20 @@ WHY = [
 
 HOME_FAQ = [
     ("What do you do?", "I help businesses reduce repetitive work by setting up practical AI automation: organising email and tasks, capturing and following up on leads, planning and approving social media content, and connecting the tools you already use."),
-    ("Are your products apps I sign up for?", "No. SocialFlow AI, ExecutiveFlow AI and LeadFlow AI are done-for-you systems that I design and set up for your business, mostly in tools you already own such as Google Workspace, together with Make.com and AI. There is nothing to install."),
+    ("Are your products apps I sign up for?", "No. SocialFlow AI, ExecutiveFlow AI and LeadFlow AI are done-for-you systems that I design and set up for your business, mostly in tools you already own such as Google Workspace, together with Make.com and AI. There is nothing to install. EduFlow AI, for schools, also gives your office staff a simple web app to sign in to."),
     ("Will anything be sent or posted without my approval?", "Not unless you want it to be. By default, email replies stay as drafts, social posts wait for approval and meetings are only added to your calendar once you confirm them."),
     ("Which tools do you work with?", "Mainly Gmail, Google Sheets, Google Calendar, Google Forms and Make.com, with AI for summaries, classification and drafting. Other tools can often be connected; I confirm this during the consultation."),
-    ("How much does it cost?", "Each product has its own pricing: ExecutiveFlow AI setups start at KES 15,000, SocialFlow AI lists its plans on its own site, and LeadFlow AI and custom projects are quoted after a consultation. You always get a written quote before work starts, and third-party tool costs such as Make.com are explained upfront. See <a href=\"pricing.html\">pricing</a>."),
+    ("How much does it cost?", "Each product has its own pricing: ExecutiveFlow AI setups start at KES 15,000, SocialFlow AI lists its plans on its own site, EduFlow AI lists its school plans on its own site, and LeadFlow AI and custom projects are quoted after a consultation. You always get a written quote before work starts, and third-party tool costs such as Make.com are explained upfront. See <a href=\"pricing.html\">pricing</a>."),
     ("Do you work with businesses outside Kenya?", "Yes. I work remotely with clients in Kenya and internationally, and can quote in KES or another currency."),
 ]
 
 
 # ============================================================== PAGES
 def build_home():
-    nodes = [("SocialFlow AI", "Social content planned, drafted and approved", "share", "pi--sf", SOCIALFLOW_URL, "50%", "15%"),
-             ("ExecutiveFlow AI", "Inbox, tasks and meetings organised", "inboxes", "pi--ef", EXECUTIVEFLOW_URL, "24%", "80%"),
-             ("LeadFlow AI", "Every enquiry captured and followed up", "funnel", "pi--lf", LEADFLOW_URL, "76%", "80%")]
+    nodes = [("SocialFlow AI", "Social content planned, drafted and approved", "share", "pi--sf", SOCIALFLOW_URL, "24%", "14%"),
+             ("EduFlow AI", "School admissions and parent messages", "school", "pi--edu", EDUFLOW_URL, "76%", "14%"),
+             ("ExecutiveFlow AI", "Inbox, tasks and meetings organised", "inboxes", "pi--ef", EXECUTIVEFLOW_URL, "24%", "76%"),
+             ("LeadFlow AI", "Every enquiry captured and followed up", "funnel", "pi--lf", LEADFLOW_URL, "76%", "76%")]
     eco_nodes = "".join(f'<a class="eco-node" href="{u}" style="left:{x};top:{y}" data-track="hero_{n.split()[0].lower()}"><span class="pi {c}">{ic(i)}</span><b>{n}</b><small>{d}</small></a>' for n, d, i, c, u, x, y in nodes)
     challenges = "".join(f'<div class="card card--flat problem reveal"><span class="ico">{ic(i)}</span><div><h3>{t}</h3><p class="mb-0">{d}</p></div></div>' for i, t, d in CHALLENGES)
     products = "".join(product_card(p, compact=True) for p in PRODUCTS)
@@ -372,9 +383,9 @@ def build_home():
         <li>{ic("globe")} Kenya &amp; international clients</li>
       </ul>
     </div>
-    <div class="eco" role="group" aria-label="My three products connected to your business">
+    <div class="eco eco--four" role="group" aria-label="My four products connected to your business">
       <svg class="eco-lines" viewBox="0 0 100 92" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M50 22 C50 32, 50 36, 50 38"/><path d="M30 70 C35 64, 39 59, 43 55"/><path d="M70 70 C65 64, 61 59, 57 55"/>
+        <path d="M30 25 C34 29, 37 32, 40 34"/><path d="M70 25 C66 29, 63 32, 60 34"/><path d="M30 58 C34 55, 37 52, 40 50"/><path d="M70 58 C66 55, 63 52, 60 50"/>
       </svg>
       <div class="eco-hub">Your business<small>one connected workflow</small></div>
       {eco_nodes}
@@ -409,8 +420,8 @@ def build_home():
 
 <section class="section" id="products">
   <div class="container">
-    <div class="head reveal"><span class="eyebrow">Our products</span><h2>Three independent AI products, one goal: less busywork</h2><p class="lead">Each product has its own focus, its own website and its own offering. Start with the one you need most, then add more as you grow.</p></div>
-    <div class="grid g3">{products}</div>
+    <div class="head reveal"><span class="eyebrow">Our products</span><h2>Four independent AI products, one goal: less busywork</h2><p class="lead">Each product has its own focus, its own website and its own offering. Start with the one you need most, then add more as you grow.</p></div>
+    <div class="grid g2">{products}</div>
     <p class="center mt-2 reveal"><a class="btn btn--outline" href="products.html" data-track="cta_compare_products">Compare all products {ic("arrow")}</a></p>
   </div>
 </section>
@@ -446,20 +457,20 @@ def build_home():
 {cta()}
 '''
     page("index.html", "Naomi Mwangi | AI Automation &amp; Digital Solutions for Growing Businesses",
-         "Naomi Mwangi helps entrepreneurs, startups and SMEs reduce repetitive work with practical AI automation: SocialFlow AI, LeadFlow AI and ExecutiveFlow AI. Book a consultation.",
+         "Naomi Mwangi helps entrepreneurs, startups and SMEs reduce repetitive work with practical AI automation: SocialFlow AI, LeadFlow AI, ExecutiveFlow AI and EduFlow AI. Book a consultation.",
          body, ld=[ORG, faq_ld(HOME_FAQ)])
 
 
 def build_products():
     cards = "".join(product_card(p) for p in PRODUCTS)
     body = f'''
-{page_hero("Our products", "Our products", "Three AI products for the work that slows you down",
-  "SocialFlow AI, ExecutiveFlow AI and LeadFlow AI are independent products, each with its own website, features and offering. Choose one to start, and add the others as your needs grow.",
+{page_hero("Our products", "Our products", "Four AI products for the work that slows you down",
+  "SocialFlow AI, ExecutiveFlow AI, LeadFlow AI and EduFlow AI are independent products, each with its own website, features and offering. Choose one to start, and add the others as your needs grow.",
   f'<div class="btn-row mt-2"><a class="btn btn--primary" href="{BOOK}" data-track="cta_book_consultation">Book a consultation</a><a class="btn btn--ghost" href="contact.html?type=demo#enquiry" data-track="cta_request_demo">Request a demo</a></div>')}
 <section class="section section--soft">
   <div class="container">
     <div class="notice reveal" style="margin-bottom:2rem">{ic("info")}<div><p><strong>How my products are delivered.</strong> Each product has its own website where you can explore it in depth. Each product is a done-for-you system that I design and set up for your business, mostly inside tools you already own (such as Google Workspace), connected with Make.com and AI. There's no app to download, and you receive training and documentation at handover.</p></div></div>
-    <div class="grid g3">{cards}</div>
+    <div class="grid g2">{cards}</div>
   </div>
 </section>
 <section class="section">
@@ -471,6 +482,7 @@ def build_products():
       <ul class="checks">
         <li><strong>Drowning in email?</strong> Start with <a href="{EXECUTIVEFLOW_URL}">ExecutiveFlow AI</a>.</li>
         <li><strong>Losing enquiries?</strong> Start with <a href="{LEADFLOW_URL}">LeadFlow AI</a>.</li>
+        <li><strong>Running a school office?</strong> Start with <a href="{EDUFLOW_URL}">EduFlow AI</a>.</li>
         <li><strong>Struggling to post consistently?</strong> Start with <a href="{SOCIALFLOW_URL}">SocialFlow AI</a>.</li>
         <li><strong>Something else entirely?</strong> I build <a href="services.html">custom automations</a> too.</li>
       </ul>
@@ -487,8 +499,8 @@ def build_products():
     ld = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "item": {"@type": "Service", "name": p["name"], "description": p["desc"],
          "provider": {"@type": "Person", "name": "Naomi Mwangi"}, "url": p["url"]}} for i, p in enumerate(PRODUCTS)]}
-    page("products.html", "Our Products: SocialFlow AI, ExecutiveFlow AI &amp; LeadFlow AI | Naomi Mwangi",
-         "Explore Naomi Mwangi's AI products: SocialFlow AI for social media workflows, ExecutiveFlow AI for email, tasks and meetings, and LeadFlow AI for lead capture and follow-up.",
+    page("products.html", "Our Products: SocialFlow AI, ExecutiveFlow AI, LeadFlow AI &amp; EduFlow AI | Naomi Mwangi",
+         "Explore Naomi Mwangi's AI products: SocialFlow AI for social media workflows, ExecutiveFlow AI for email, tasks and meetings, LeadFlow AI for lead capture and follow-up, and EduFlow AI for school admissions and parent communication.",
          body, ld=[ld])
 
 
@@ -502,6 +514,7 @@ def build_redirects():
     redirect("leadflow-ai.html", LEADFLOW_URL, "LeadFlow AI")
     redirect("executiveflow-ai.html", EXECUTIVEFLOW_URL, "ExecutiveFlow AI")
     redirect("ai-executive-assistant.html", EXECUTIVEFLOW_URL, "ExecutiveFlow AI")
+    redirect("eduflow-ai.html", EDUFLOW_URL, "EduFlow AI")
 
 
 def chips(items):
@@ -562,7 +575,7 @@ def build_services():
             ("3", "Expand as you grow", "Add the next workflow when you're ready, building on what already works.")]
     body = f'''
 {page_hero("Services", "Automation services", "Custom automation for the way your business works",
-  "Beyond my three products, I design automations around your specific processes, from simple data workflows to AI-assisted solutions.")}
+  "Beyond my four products, I design automations around your specific processes, from simple data workflows to AI-assisted solutions.")}
 <section class="section"><div class="container">{blocks}</div></section>
 <section class="section section--soft">
   <div class="container">
@@ -607,6 +620,7 @@ def build_pricing():
         ("acc-sf", "share", "SocialFlow AI", "Plans for social media content workflows are listed on the SocialFlow AI website.", SOCIALFLOW_URL + "#pricing", "See SocialFlow AI pricing"),
         ("acc-ef", "inboxes", "ExecutiveFlow AI", "One-off setup packages from KES 15,000 (Starter), KES 30,000 (Professional) and KES 50,000+ (Business).", EXECUTIVEFLOW_URL + "#pricing", "See ExecutiveFlow AI packages"),
         ("acc-lf", "funnel", "LeadFlow AI", "Quoted after a short consultation, based on your lead sources, tools and volumes.", LEADFLOW_URL + "#pricing", "See how LeadFlow AI is priced"),
+        ("acc-edu", "school", "EduFlow AI", "Monthly school plans from KES 4,500 plus a one-time setup, sized by number of learners.", EDUFLOW_URL + "#pricing", "See EduFlow AI school plans"),
     ]
     html = "".join(f'''<div class="card reveal {acc}"><span class="ico" style="background:var(--acc-bg);color:var(--acc)">{ic(i)}</span><h3>{n}</h3><p>{d}</p><a class="link-arrow" href="{u}">{l} {ic("ext")}</a></div>''' for acc, i, n, d, u, l in cards)
     pfaq = [("Why is pricing on each product's website?", "Each product is independent and priced for the work it does, so its packages live with its features and FAQs. This page brings them together."),
@@ -619,7 +633,7 @@ def build_pricing():
   "Each of my products has its own pricing on its own website. Custom automation work is quoted after a consultation, and you always receive a written quote before work starts.")}
 <section class="section section--soft">
   <div class="container">
-    <div class="grid g3">{html}</div>
+    <div class="grid g4">{html}</div>
     <div class="grid g2 mt-3">
       <div class="card reveal"><span class="ico">{ic("puzzle")}</span><h3>Custom automation projects</h3><p>Business process automation, AI workflow integration and custom AI-assisted solutions are quoted after a consultation.</p><a class="link-arrow" href="contact.html?service=custom&amp;type=consultation#enquiry">Request a quote {ic("arrow")}</a></div>
       <div class="card reveal"><span class="ico">{ic("tool")}</span><h3>Optional monthly maintenance</h3><p>Monitoring, adjustments, prompt tuning and support after handover, priced by the size of your system.</p><a class="link-arrow" href="contact.html?type=general#enquiry">Ask about maintenance {ic("arrow")}</a></div>
@@ -631,7 +645,7 @@ def build_pricing():
 {cta("Get a quote for your business", "Share a little about your processes and I'll recommend the right starting point.")}
 '''
     page("pricing.html", "Pricing by Product | Naomi Mwangi",
-         "Pricing for Naomi Mwangi's products: SocialFlow AI plans, ExecutiveFlow AI setup packages from KES 15,000, and LeadFlow AI and custom automation quoted on request.",
+         "Pricing for Naomi Mwangi's products: SocialFlow AI plans, ExecutiveFlow AI setup packages from KES 15,000, EduFlow AI school plans from KES 4,500 a month, and LeadFlow AI and custom automation quoted on request.",
          body, ld=[faq_ld(pfaq)])
 
 
@@ -688,7 +702,7 @@ def build_about():
 
 def build_contact():
     services = [("socialflow", "SocialFlow AI (social media workflows)"), ("leadflow", "LeadFlow AI (lead capture & follow-up)"),
-                ("executiveflow", "ExecutiveFlow AI (email, tasks & meetings)"), ("process", "Business process automation"),
+                ("executiveflow", "ExecutiveFlow AI (email, tasks & meetings)"), ("eduflow", "EduFlow AI (school admissions & parent messages)"), ("process", "Business process automation"),
                 ("ai-integration", "AI workflow integration"), ("custom", "Custom AI-assisted solution"), ("unsure", "Not sure yet")]
     opts = "".join(f'<option value="{t.replace("&", "&amp;")}" data-key="{k}">{t.replace("&", "&amp;")}</option>' for k, t in services)
     types = [("consultation", "Book a consultation", True), ("demo", "Request a demo", False), ("general", "General question", False)]
@@ -748,7 +762,7 @@ def build_contact():
 </section>
 '''
     page("contact.html", "Contact Naomi Mwangi | Book a Consultation or Request a Demo",
-         "Book a consultation, request a demo or ask a question about SocialFlow AI, LeadFlow AI, ExecutiveFlow AI or custom automation. Contact Naomi Mwangi by form, WhatsApp or email.",
+         "Book a consultation, request a demo or ask a question about SocialFlow AI, LeadFlow AI, ExecutiveFlow AI, EduFlow AI or custom automation. Contact Naomi Mwangi by form, WhatsApp or email.",
          body, ld=[{"@context": "https://schema.org", "@type": "ContactPage", "name": "Contact Naomi Mwangi", "url": SITE_URL + "/contact.html"}])
 
 
